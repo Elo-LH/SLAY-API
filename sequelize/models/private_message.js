@@ -43,6 +43,7 @@ module.exports = function (sequelize, DataTypes) {
       tableName: 'private_message',
       schema: 'public',
       timestamps: false,
+      underscored: true,
       indexes: [
         {
           name: 'private_message_pkey',

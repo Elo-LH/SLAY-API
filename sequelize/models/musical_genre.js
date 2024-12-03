@@ -21,6 +21,7 @@ module.exports = function (sequelize, DataTypes) {
       tableName: 'musical_genre',
       schema: 'public',
       timestamps: false,
+      underscored: true,
       indexes: [
         {
           name: 'musical_genre_id_key',

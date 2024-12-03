@@ -9,12 +9,16 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: false,
         primaryKey: true,
       },
-      coordinates: {
-        type: 'POINT',
-        allowNull: false,
-      },
       city: {
         type: DataTypes.STRING(255),
+        allowNull: false,
+      },
+      latitude: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+      },
+      longitude: {
+        type: DataTypes.FLOAT,
         allowNull: false,
       },
     },
@@ -23,6 +27,7 @@ module.exports = function (sequelize, DataTypes) {
       tableName: 'geolocation',
       schema: 'public',
       timestamps: false,
+      underscored: true,
       indexes: [
         {
           name: 'geolocalisation_pkey',

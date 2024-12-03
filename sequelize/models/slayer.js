@@ -53,6 +53,7 @@ module.exports = function (sequelize, DataTypes) {
       tableName: 'slayer',
       schema: 'public',
       timestamps: false,
+      underscored: true,
       indexes: [
         {
           name: 'user_email_key',
