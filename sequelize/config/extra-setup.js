@@ -3,11 +3,13 @@ function applyExtraSetup(sequelize) {
     album,
     artist,
     band,
+    comment,
     geolocation,
     instrument,
     musicalGenre,
     privateMessage,
     slayer,
+    slayerSearch,
     sound,
   } = sequelize.models
 

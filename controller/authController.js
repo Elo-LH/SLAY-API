@@ -1,8 +1,8 @@
 const sequelize = require('../sequelize/config/database')
 var initModels = require('../sequelize/models/init-models')
 var models = initModels(sequelize)
-const Slayer = models.slayer
-const Geolocation = models.geolocation
+const Slayer = models.Slayer
+const Geolocation = models.Geolocation
 const signup = async (req, res, next) => {
   const body = req.body
 
@@ -48,7 +48,16 @@ const signup = async (req, res, next) => {
     }
     // initiate geolocation if there is one
     if (body.geolocation) {
-      const slayerGeolocation = await Geolocation.create(body.geolocation)
+      const [slayerGeolocation, created] = await Geolocation.findOrCreate({
+        where: {
+          latitude: body.geolocation.latitude,
+          longitude: body.geolocation.longitude,
+        },
+        defaults: {
+          city: body.geolocation.city,
+        },
+      })
+      console.log(slayerGeolocation)
       await newUser.addGeolocation(slayerGeolocation)
     }
     // Response "user created"
