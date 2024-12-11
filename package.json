@@ -1,11 +1,14 @@
 {
-  "name": "api-boilerplate-node.js-sequelize",
+  "type": "module",
+  "name": "slay-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/app.ts",
   "scripts": {
-    "start:dev": "node --watch app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:build": "tsc -w",
+    "start:run": "nodemon ./build/app.js",
+    "start": "concurrently npm:start:*",
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +21,12 @@
     "sequelize": "^6.37.5"
   },
   "devDependencies": {
-    "sequelize-auto": "^0.8.8"
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.1",
+    "concurrently": "^9.1.0",
+    "nodemon": "^3.1.7",
+    "sequelize-auto": "^0.8.8",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
   }
 }
