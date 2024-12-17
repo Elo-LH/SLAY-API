@@ -1,70 +1,72 @@
-import sequelize from '../sequelize/config/database';
-import initModels from '../sequelize/models/init-models';
-var models = initModels(sequelize);
-const Slayer = models.Slayer;
-const Geolocation = models.Geolocation;
+import { Slayer } from '../sequelize/models/Slayer.js';
+// import { Geolocation } from '../sequelize/models/Geolocation.js'
 const signup = async (req, res) => {
     const slayer = req.body;
     const geolocation = slayer.geolocation;
     try {
         // Check if email not already in db
         const emailExists = await Slayer.findOne({
-            where: { email: slayer.email },
+            where: { email: req.body.email },
         });
         if (emailExists) {
-            return res.status(400).json({ message: 'Email already registered' });
+            res.status(400).json({ message: 'Email already registered' });
+            return;
         }
         // Check if pseudo not already in db
         const pseudoExists = await Slayer.findOne({
-            where: { pseudo: slayer.pseudo },
+            where: { pseudo: req.body.pseudo },
         });
         if (pseudoExists) {
-            return res.status(400).json({ message: 'Pseudo already used' });
+            res.status(400).json({ message: 'Pseudo already used' });
+            return;
         }
         //verify difficulty and encrypt password
         // check slayer role
-        if (slayer.role === 'ARTIST') {
+        if (req.body.role === 'artist') {
             //create an artist
         }
-        if (slayer.role === 'BAND') {
+        if (req.body.role === 'band') {
             //create a band
         }
         // else by default : Create a user
-        console.log(slayer);
+        console.log(req.body);
         //create user
         const newUser = await Slayer.create({
-            email: slayer.email,
-            pseudo: slayer.pseudo,
-            password: slayer.password,
-            avatar: slayer.avatar,
-            role: slayer.role,
-            pronouns: slayer.pronouns,
-            isSearching: slayer.isSearching,
+            email: req.body.email,
+            pseudo: req.body.pseudo,
+            password: req.body.password,
+            avatar: req.body.avatar,
+            role: req.body.role,
+            pronouns: req.body.pronouns,
+            isSearching: req.body.isSearching,
         });
         if (!newUser) {
-            return res.status(400).json({ message: 'Failed to create new Slayer' });
+            res.status(400).json({ message: 'Failed to create new Slayer' });
+            return;
         }
         // initiate geolocation if there is one
-        if (geolocation) {
-            const [slayerGeolocation, created] = await Geolocation.findOrCreate({
-                where: {
-                    latitude: geolocation.latitude,
-                    longitude: geolocation.longitude,
-                },
-                defaults: {
-                    city: geolocation.city,
-                },
-            });
-            console.log(slayerGeolocation);
-            await newUser.addGeolocation(slayerGeolocation);
-        }
+        // if (req.body.geolocation) {
+        //   const [slayerGeolocation, created] = await Geolocation.findOrCreate({
+        //     where: {
+        //       latitude: req.body.geolocation.latitude,
+        //       longitude: req.body.geolocation.longitude,
+        //     },
+        //     defaults: {
+        //       city: req.body.geolocation.city,
+        //     },
+        //   })
+        //   console.log(slayerGeolocation)
+        //   await newUser.addGeolocation(slayerGeolocation)
+        // }
         // Response "user created"
-        return res.status(201).json({ message: 'Slayer created', user: newUser });
+        res.status(201).json({ message: 'Slayer created', user: newUser });
+        return;
     }
     catch (error) {
         // Handle any errors that occur during the process
         console.error(error);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ message: 'Internal Server Error' });
+        return;
     }
 };
 export default signup;

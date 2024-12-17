@@ -10,8 +10,9 @@ config({ path: resolve(process.cwd(), '.env') })
 
 import express, { Express, Request, Response } from 'express'
 import sequelize from './sequelize/config/database.js'
-// import authRouter from './route/authRoute.js'
+import authRouter from './route/authRoute.js'
 
+console.log(`Lauching APP.js`)
 const app: Express = express()
 
 // Use body-parser middleware
@@ -48,7 +49,7 @@ app.get('/', (req, res) => {
 
 // Authentification routes
 
-// app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/auth', authRouter)
 
 // Default not found route
 app.use('*', (req: Request, res: Response) => {

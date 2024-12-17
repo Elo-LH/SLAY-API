@@ -1,4 +1,5 @@
-import signup from '../controller/authController';
-const router = require('express').Router();
-router.route('/signup').post(signup);
-export default router;
+import signup from '../controller/authController.js';
+import { Router } from 'express';
+const authRouter = Router();
+authRouter.route('/signup').post(signup);
+export default authRouter;

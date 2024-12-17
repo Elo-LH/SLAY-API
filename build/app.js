@@ -7,7 +7,8 @@ import bodyParser from 'body-parser';
 config({ path: resolve(process.cwd(), '.env') });
 import express from 'express';
 import sequelize from './sequelize/config/database.js';
-// import authRouter from './route/authRoute.js'
+import authRouter from './route/authRoute.js';
+console.log(`Lauching APP.js`);
 const app = express();
 // Use body-parser middleware
 app.use(bodyParser.json());
@@ -36,7 +37,7 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 // Authentification routes
-// app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/auth', authRouter);
 // Default not found route
 app.use('*', (req, res) => {
     res.status(404).json({
