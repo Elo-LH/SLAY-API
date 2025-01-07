@@ -1,4 +1,5 @@
-import { Sequelize, Options } from 'sequelize'
+import { Options } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import dbConfig from './config.js'
 
 // Define the type for the environment keys
@@ -7,7 +8,34 @@ type Env = 'development' | 'test' | 'production'
 // Ensure `env` is one of the expected keys
 const env: Env = (process.env.NODE_ENV as Env) || 'development'
 
-const options: Options = dbConfig[env]
-const sequelize = new Sequelize(options)
+// import fs from 'fs'
+// import path from 'path'
 
+// // Get the current working directory
+// const currentDirectory = process.cwd()
+
+// // Read the contents of the current working directory
+// fs.readdir(currentDirectory, (err, files: Array<String>) => {
+//   if (err) {
+//     return console.error('Unable to scan directory: ' + err)
+//   }
+
+//   // Display the contents of the directory
+//   files.forEach((file) => {
+//     console.log(file)
+//   })
+// })
+
+const options: Options = dbConfig[env]
+const sequelize = new Sequelize({
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  dialect: 'postgres',
+  models: [process.cwd() + '/build/sequelize/models'],
+})
+
+console.log(Object.getOwnPropertyNames(sequelize))
 export default sequelize

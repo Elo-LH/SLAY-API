@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Model, Column, Table, ForeignKey, BelongsTo, BelongsToMany, } from 'sequelize-typescript';
+import { Scopes, Model, Column, Table, ForeignKey, BelongsTo, BelongsToMany, } from 'sequelize-typescript';
 import { Album } from './Album.js';
 import { Slayer } from './Slayer.js';
 import { SlayerSound } from './SlayerSound.js';
@@ -40,6 +40,44 @@ __decorate([
     __metadata("design:type", Array)
 ], Sound.prototype, "performers", void 0);
 Sound = __decorate([
+    Scopes(() => ({
+        album_id: {
+            include: [
+                {
+                    model: Album,
+                    through: { attributes: [] },
+                },
+            ],
+        },
+        album: {
+            include: [
+                {
+                    model: Album,
+                    through: { attributes: [] },
+                },
+            ],
+        },
+        performers: {
+            include: [
+                {
+                    model: Slayer,
+                    through: { attributes: [] },
+                },
+            ],
+        },
+        full: {
+            include: [
+                {
+                    model: Album,
+                    through: { attributes: [] },
+                },
+                {
+                    model: Slayer,
+                    through: { attributes: [] },
+                },
+            ],
+        },
+    })),
     Table({
         timestamps: false,
         underscored: true,

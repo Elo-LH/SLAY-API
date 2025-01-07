@@ -2,28 +2,30 @@ import { Request, Response } from 'express'
 import { Slayer } from '../sequelize/models/Slayer.js'
 // import { Geolocation } from '../sequelize/models/Geolocation.js'
 const signup = async (req: Request, res: Response): Promise<void> => {
-  interface Slayer {
-    email: string
-    pseudo: string
-    password: string
-    avatar: string
-    role: string
-    isSearching: boolean
-    pronouns: string
-    geolocation: Geolocation
-  }
-  interface Geolocation {
-    city: string
-    latitude: number
-    longitude: number
-  }
+  // interface Slayer {
+  //   email: string
+  //   pseudo: string
+  //   password: string
+  //   avatar: string
+  //   role: string
+  //   isSearching: boolean
+  //   pronouns: string
+  //   geolocation: Geolocation
+  // }
+  // interface Geolocation {
+  //   city: string
+  //   latitude: number
+  //   longitude: number
+  // }
 
   const slayer: Slayer = req.body
-  const geolocation: Geolocation = slayer.geolocation
+  console.log(slayer)
+  console.log(Slayer)
+  // const geolocation: Geolocation = slayer.geolocation
 
   try {
     // Check if email not already in db
-    const emailExists = await Slayer.findOne({
+    const emailExists: Slayer | null = await Slayer.findOne({
       where: { email: req.body.email },
     })
     if (emailExists) {

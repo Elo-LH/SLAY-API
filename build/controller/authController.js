@@ -1,8 +1,25 @@
 import { Slayer } from '../sequelize/models/Slayer.js';
 // import { Geolocation } from '../sequelize/models/Geolocation.js'
 const signup = async (req, res) => {
+    // interface Slayer {
+    //   email: string
+    //   pseudo: string
+    //   password: string
+    //   avatar: string
+    //   role: string
+    //   isSearching: boolean
+    //   pronouns: string
+    //   geolocation: Geolocation
+    // }
+    // interface Geolocation {
+    //   city: string
+    //   latitude: number
+    //   longitude: number
+    // }
     const slayer = req.body;
-    const geolocation = slayer.geolocation;
+    console.log(slayer);
+    console.log(Slayer);
+    // const geolocation: Geolocation = slayer.geolocation
     try {
         // Check if email not already in db
         const emailExists = await Slayer.findOne({
