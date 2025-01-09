@@ -1,5 +1,10 @@
-import { Sequelize } from 'sequelize-typescript';
-import dbConfig from './config.js';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const sequelize_typescript_1 = require("sequelize-typescript");
+const config_js_1 = __importDefault(require("./config.js"));
 // Ensure `env` is one of the expected keys
 const env = process.env.NODE_ENV || 'development';
 // import fs from 'fs'
@@ -16,15 +21,7 @@ const env = process.env.NODE_ENV || 'development';
 //     console.log(file)
 //   })
 // })
-const options = dbConfig[env];
-const sequelize = new Sequelize({
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT),
-    dialect: 'postgres',
-    models: [process.cwd() + '/build/sequelize/models'],
-});
+const options = config_js_1.default[env];
+const sequelize = new sequelize_typescript_1.Sequelize(options);
 console.log(Object.getOwnPropertyNames(sequelize));
-export default sequelize;
+exports.default = sequelize;

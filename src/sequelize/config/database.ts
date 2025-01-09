@@ -1,5 +1,5 @@
 import { Options } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
+import { Sequelize, SequelizeOptions } from 'sequelize-typescript'
 import dbConfig from './config.js'
 
 // Define the type for the environment keys
@@ -26,16 +26,8 @@ const env: Env = (process.env.NODE_ENV as Env) || 'development'
 //   })
 // })
 
-const options: Options = dbConfig[env]
-const sequelize = new Sequelize({
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  dialect: 'postgres',
-  models: [process.cwd() + '/build/sequelize/models'],
-})
+const options: SequelizeOptions = dbConfig[env]
+const sequelize = new Sequelize(options)
 
 console.log(Object.getOwnPropertyNames(sequelize))
 export default sequelize

@@ -1,3 +1,4 @@
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7,9 +8,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Model, Column, Table, HasMany } from 'sequelize-typescript';
-import { Sound } from './Sound.js';
-let Album = class Album extends Model {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Album = void 0;
+const sequelize_typescript_1 = require("sequelize-typescript");
+const Sound_js_1 = require("./Sound.js");
+let Album = class Album extends sequelize_typescript_1.Model {
     name;
     description;
     type;
@@ -17,34 +20,34 @@ let Album = class Album extends Model {
     released_at;
     sounds;
 };
+exports.Album = Album;
 __decorate([
-    Column,
+    sequelize_typescript_1.Column,
     __metadata("design:type", String)
 ], Album.prototype, "name", void 0);
 __decorate([
-    Column,
+    sequelize_typescript_1.Column,
     __metadata("design:type", String)
 ], Album.prototype, "description", void 0);
 __decorate([
-    Column,
+    sequelize_typescript_1.Column,
     __metadata("design:type", String)
 ], Album.prototype, "type", void 0);
 __decorate([
-    Column,
+    sequelize_typescript_1.Column,
     __metadata("design:type", String)
 ], Album.prototype, "cover", void 0);
 __decorate([
-    Column,
+    sequelize_typescript_1.Column,
     __metadata("design:type", Date)
 ], Album.prototype, "released_at", void 0);
 __decorate([
-    HasMany(() => Sound),
+    (0, sequelize_typescript_1.HasMany)(() => Sound_js_1.Sound),
     __metadata("design:type", Array)
 ], Album.prototype, "sounds", void 0);
-Album = __decorate([
-    Table({
+exports.Album = Album = __decorate([
+    (0, sequelize_typescript_1.Table)({
         timestamps: false,
         underscored: true,
     })
 ], Album);
-export { Album };

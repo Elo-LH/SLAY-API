@@ -3,6 +3,7 @@ import { Slayer } from './Slayer.js'
 // import { SlayerSearch } from './SlayerSearch.js'
 
 @Table({
+  tableName: 'geolocation',
   timestamps: false,
   underscored: true,
 })

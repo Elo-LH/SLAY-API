@@ -1,13 +1,14 @@
 import { config } from 'dotenv'
 import { resolve } from 'path'
 import { Options } from 'sequelize'
+import { SequelizeOptions } from 'sequelize-typescript'
 
 // Define the type for the environment keys
 type Env = 'development' | 'test' | 'production'
 // Configure dotenv
 config({ path: resolve(process.cwd(), '.env') })
 
-const dbConfig: { [key in Env]: Options } = {
+const dbConfig: { [key in Env]: SequelizeOptions } = {
   development: {
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
@@ -15,6 +16,7 @@ const dbConfig: { [key in Env]: Options } = {
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
     dialect: 'postgres',
+    models: [process.cwd() + '/build/sequelize/models'],
   },
   test: {
     username: 'root',

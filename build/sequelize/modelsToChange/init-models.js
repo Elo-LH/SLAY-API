@@ -1,5 +1,5 @@
+"use strict";
 // import { DataTypes, Sequelize, Model } from 'sequelize'
-export {};
 //models
 // var _artist = require('./artist')
 // var _band = require('./band')

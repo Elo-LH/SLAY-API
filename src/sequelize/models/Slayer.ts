@@ -18,6 +18,7 @@ const rolesEnum: string[] = ['artist', 'band', 'slayer']
 @Table({
   timestamps: false,
   underscored: true,
+  tableName: 'slayer',
   indexes: [
     {
       // Column name with underscores here

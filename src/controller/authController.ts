@@ -1,23 +1,7 @@
 import { Request, Response } from 'express'
 import { Slayer } from '../sequelize/models/Slayer.js'
-// import { Geolocation } from '../sequelize/models/Geolocation.js'
+import { Geolocation } from '../sequelize/models/Geolocation.js'
 const signup = async (req: Request, res: Response): Promise<void> => {
-  // interface Slayer {
-  //   email: string
-  //   pseudo: string
-  //   password: string
-  //   avatar: string
-  //   role: string
-  //   isSearching: boolean
-  //   pronouns: string
-  //   geolocation: Geolocation
-  // }
-  // interface Geolocation {
-  //   city: string
-  //   latitude: number
-  //   longitude: number
-  // }
-
   const slayer: Slayer = req.body
   console.log(slayer)
   console.log(Slayer)
@@ -68,21 +52,21 @@ const signup = async (req: Request, res: Response): Promise<void> => {
     }
     // initiate geolocation if there is one
 
-    // if (req.body.geolocation) {
+    // if (geolocation) {
     //   const [slayerGeolocation, created] = await Geolocation.findOrCreate({
     //     where: {
-    //       latitude: req.body.geolocation.latitude,
-    //       longitude: req.body.geolocation.longitude,
+    //       latitude: geolocation.latitude,
+    //       longitude: geolocation.longitude,
     //     },
     //     defaults: {
-    //       city: req.body.geolocation.city,
+    //       city: geolocation.city,
     //     },
     //   })
     //   console.log(slayerGeolocation)
     //   await newUser.addGeolocation(slayerGeolocation)
     // }
-    // Response "user created"
 
+    // Response "user created"
     res.status(201).json({ message: 'Slayer created', user: newUser })
     return
   } catch (error) {

@@ -1,7 +1,9 @@
-import { config } from 'dotenv';
-import { resolve } from 'path';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const dotenv_1 = require("dotenv");
+const path_1 = require("path");
 // Configure dotenv
-config({ path: resolve(process.cwd(), '.env') });
+(0, dotenv_1.config)({ path: (0, path_1.resolve)(process.cwd(), '.env') });
 const dbConfig = {
     development: {
         username: process.env.DB_USERNAME,
@@ -10,6 +12,7 @@ const dbConfig = {
         host: process.env.DB_HOST,
         port: Number(process.env.DB_PORT),
         dialect: 'postgres',
+        models: [process.cwd() + '/build/sequelize/models'],
     },
     test: {
         username: 'root',
@@ -26,4 +29,4 @@ const dbConfig = {
         dialect: 'mysql',
     },
 };
-export default dbConfig;
+exports.default = dbConfig;

@@ -1,4 +1,6 @@
-import { Slayer } from '../sequelize/models/Slayer.js';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Slayer_js_1 = require("../sequelize/models/Slayer.js");
 // import { Geolocation } from '../sequelize/models/Geolocation.js'
 const signup = async (req, res) => {
     // interface Slayer {
@@ -18,11 +20,11 @@ const signup = async (req, res) => {
     // }
     const slayer = req.body;
     console.log(slayer);
-    console.log(Slayer);
+    console.log(Slayer_js_1.Slayer);
     // const geolocation: Geolocation = slayer.geolocation
     try {
         // Check if email not already in db
-        const emailExists = await Slayer.findOne({
+        const emailExists = await Slayer_js_1.Slayer.findOne({
             where: { email: req.body.email },
         });
         if (emailExists) {
@@ -30,7 +32,7 @@ const signup = async (req, res) => {
             return;
         }
         // Check if pseudo not already in db
-        const pseudoExists = await Slayer.findOne({
+        const pseudoExists = await Slayer_js_1.Slayer.findOne({
             where: { pseudo: req.body.pseudo },
         });
         if (pseudoExists) {
@@ -48,7 +50,7 @@ const signup = async (req, res) => {
         // else by default : Create a user
         console.log(req.body);
         //create user
-        const newUser = await Slayer.create({
+        const newUser = await Slayer_js_1.Slayer.create({
             email: req.body.email,
             pseudo: req.body.pseudo,
             password: req.body.password,
@@ -86,4 +88,4 @@ const signup = async (req, res) => {
         return;
     }
 };
-export default signup;
+exports.default = signup;
