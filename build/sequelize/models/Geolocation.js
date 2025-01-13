@@ -40,7 +40,26 @@ __decorate([
     __metadata("design:type", Array)
 ], Geolocation.prototype, "slayers", void 0);
 exports.Geolocation = Geolocation = __decorate([
+    (0, sequelize_typescript_1.Scopes)(() => ({
+        slayers: {
+            include: [
+                {
+                    model: Slayer_js_1.Slayer,
+                    through: { attributes: [] },
+                },
+            ],
+        },
+        full: {
+            include: [
+                {
+                    model: Slayer_js_1.Slayer,
+                    through: { attributes: [] },
+                },
+            ],
+        },
+    })),
     (0, sequelize_typescript_1.Table)({
+        tableName: 'geolocation',
         timestamps: false,
         underscored: true,
     })

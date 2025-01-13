@@ -1,7 +1,32 @@
-import { Model, Column, Table, HasMany, AllowNull } from 'sequelize-typescript'
+import {
+  Model,
+  Column,
+  Table,
+  HasMany,
+  AllowNull,
+  Scopes,
+} from 'sequelize-typescript'
 import { Slayer } from './Slayer.js'
 // import { SlayerSearch } from './SlayerSearch.js'
 
+@Scopes(() => ({
+  slayers: {
+    include: [
+      {
+        model: Slayer,
+        through: { attributes: [] },
+      },
+    ],
+  },
+  full: {
+    include: [
+      {
+        model: Slayer,
+        through: { attributes: [] },
+      },
+    ],
+  },
+}))
 @Table({
   tableName: 'geolocation',
   timestamps: false,

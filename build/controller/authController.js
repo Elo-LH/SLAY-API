@@ -1,23 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.slayers = exports.signup = void 0;
 const Slayer_js_1 = require("../sequelize/models/Slayer.js");
-// import { Geolocation } from '../sequelize/models/Geolocation.js'
+const Geolocation_js_1 = require("../sequelize/models/Geolocation.js");
 const signup = async (req, res) => {
-    // interface Slayer {
-    //   email: string
-    //   pseudo: string
-    //   password: string
-    //   avatar: string
-    //   role: string
-    //   isSearching: boolean
-    //   pronouns: string
-    //   geolocation: Geolocation
-    // }
-    // interface Geolocation {
-    //   city: string
-    //   latitude: number
-    //   longitude: number
-    // }
     const slayer = req.body;
     console.log(slayer);
     console.log(Slayer_js_1.Slayer);
@@ -50,35 +36,46 @@ const signup = async (req, res) => {
         // else by default : Create a user
         console.log(req.body);
         //create user
-        const newUser = await Slayer_js_1.Slayer.create({
-            email: req.body.email,
-            pseudo: req.body.pseudo,
-            password: req.body.password,
-            avatar: req.body.avatar,
-            role: req.body.role,
-            pronouns: req.body.pronouns,
-            isSearching: req.body.isSearching,
-        });
+        const newUser = await Slayer_js_1.Slayer.create(req.body);
         if (!newUser) {
             res.status(400).json({ message: 'Failed to create new Slayer' });
             return;
         }
         // initiate geolocation if there is one
-        // if (req.body.geolocation) {
-        //   const [slayerGeolocation, created] = await Geolocation.findOrCreate({
-        //     where: {
-        //       latitude: req.body.geolocation.latitude,
-        //       longitude: req.body.geolocation.longitude,
-        //     },
-        //     defaults: {
-        //       city: req.body.geolocation.city,
-        //     },
-        //   })
-        //   console.log(slayerGeolocation)
-        //   await newUser.addGeolocation(slayerGeolocation)
-        // }
+        if (req.body.geolocation) {
+            await Geolocation_js_1.Geolocation.findOrCreate({
+                where: {
+                    latitude: req.body.geolocation.latitude,
+                    longitude: req.body.geolocation.longitude,
+                    city: req.body.geolocation.city,
+                },
+            })
+                .then(([slayerGeolocation, created]) => newUser.$set('geolocation', slayerGeolocation))
+                .then((newUserGeo) => {
+                console.log(newUserGeo);
+                res.status(201).json({ message: 'Slayer created', user: newUserGeo });
+                return;
+            });
+        }
+        else {
+            // Response "user created"
+            res.status(201).json({ message: 'Slayer created', user: newUser });
+            return;
+        }
+    }
+    catch (error) {
+        // Handle any errors that occur during the process
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+        return;
+    }
+};
+exports.signup = signup;
+const slayers = async (req, res) => {
+    try {
+        const result = await Slayer_js_1.Slayer.findAll({ include: Geolocation_js_1.Geolocation });
         // Response "user created"
-        res.status(201).json({ message: 'Slayer created', user: newUser });
+        res.status(201).json({ message: 'Slayer created', user: result });
         return;
     }
     catch (error) {
@@ -88,4 +85,4 @@ const signup = async (req, res) => {
         return;
     }
 };
-exports.default = signup;
+exports.slayers = slayers;

@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
 import { Slayer } from '../sequelize/models/Slayer.js'
 import { Geolocation } from '../sequelize/models/Geolocation.js'
-const signup = async (req: Request, res: Response): Promise<void> => {
+
+export const signup = async (req: Request, res: Response): Promise<void> => {
   const slayer: Slayer = req.body
   console.log(slayer)
   console.log(Slayer)
@@ -37,38 +38,34 @@ const signup = async (req: Request, res: Response): Promise<void> => {
     console.log(req.body)
 
     //create user
-    const newUser = await Slayer.create({
-      email: req.body.email,
-      pseudo: req.body.pseudo,
-      password: req.body.password,
-      avatar: req.body.avatar,
-      role: req.body.role,
-      pronouns: req.body.pronouns,
-      isSearching: req.body.isSearching,
-    } as any)
+    const newUser = await Slayer.create(req.body)
     if (!newUser) {
       res.status(400).json({ message: 'Failed to create new Slayer' })
       return
     }
     // initiate geolocation if there is one
 
-    // if (geolocation) {
-    //   const [slayerGeolocation, created] = await Geolocation.findOrCreate({
-    //     where: {
-    //       latitude: geolocation.latitude,
-    //       longitude: geolocation.longitude,
-    //     },
-    //     defaults: {
-    //       city: geolocation.city,
-    //     },
-    //   })
-    //   console.log(slayerGeolocation)
-    //   await newUser.addGeolocation(slayerGeolocation)
-    // }
-
-    // Response "user created"
-    res.status(201).json({ message: 'Slayer created', user: newUser })
-    return
+    if (req.body.geolocation) {
+      await Geolocation.findOrCreate({
+        where: {
+          latitude: req.body.geolocation.latitude,
+          longitude: req.body.geolocation.longitude,
+          city: req.body.geolocation.city,
+        },
+      })
+        .then(([slayerGeolocation, created]) =>
+          newUser.$set('geolocation', slayerGeolocation)
+        )
+        .then((newUserGeo) => {
+          console.log(newUserGeo)
+          res.status(201).json({ message: 'Slayer created', user: newUserGeo })
+          return
+        })
+    } else {
+      // Response "user created"
+      res.status(201).json({ message: 'Slayer created', user: newUser })
+      return
+    }
   } catch (error) {
     // Handle any errors that occur during the process
     console.error(error)
@@ -77,4 +74,16 @@ const signup = async (req: Request, res: Response): Promise<void> => {
   }
 }
 
-export default signup
+export const slayers = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const result = await Slayer.findAll({ include: Geolocation })
+    // Response "user created"
+    res.status(201).json({ message: 'Slayer created', user: result })
+    return
+  } catch (error) {
+    // Handle any errors that occur during the process
+    console.error(error)
+    res.status(500).json({ message: 'Internal Server Error' })
+    return
+  }
+}

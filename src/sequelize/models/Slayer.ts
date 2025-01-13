@@ -4,17 +4,35 @@ import {
   Table,
   ForeignKey,
   BelongsTo,
-  BelongsToMany,
   DataType,
   Default,
   Unique,
   AllowNull,
+  Scopes,
 } from 'sequelize-typescript'
 import { Geolocation } from './Geolocation.js'
 
 const pronounsEnum: string[] = ['il', 'elle', 'iel']
 const rolesEnum: string[] = ['artist', 'band', 'slayer']
 
+@Scopes(() => ({
+  geolocation: {
+    include: [
+      {
+        model: Geolocation,
+        through: { attributes: [] },
+      },
+    ],
+  },
+  full: {
+    include: [
+      {
+        model: Geolocation,
+        through: { attributes: [] },
+      },
+    ],
+  },
+}))
 @Table({
   timestamps: false,
   underscored: true,
