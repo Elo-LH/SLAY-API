@@ -11,6 +11,7 @@ import {
   BeforeCreate,
   DefaultScope,
   AfterCreate,
+  Scopes,
 } from 'sequelize-typescript'
 import { Geolocation } from './Geolocation.js'
 import { Utils } from '../../service/utils.js'
@@ -20,6 +21,11 @@ const rolesEnum: string[] = ['artist', 'band', 'slayer']
 
 @DefaultScope(() => ({
   attributes: { exclude: ['password'] },
+}))
+@Scopes(() => ({
+  withPassword: {
+    attributes: { include: ['password'] },
+  },
 }))
 @Table({
   timestamps: false,

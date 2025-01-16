@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { Slayer } from '../sequelize/models/Slayer.js'
 import { Geolocation } from '../sequelize/models/Geolocation.js'
+import { Utils } from '../service/utils.js'
 
 export const signup = async (req: Request, res: Response): Promise<void> => {
   const slayer: Slayer = req.body
@@ -59,7 +60,47 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
     // Response "user created"
     res.status(201).json({
       message: 'Slayer created',
-      user: await Slayer.findByPk(newUser.id, { include: Geolocation }),
+      slayer: await Slayer.findByPk(newUser.id, { include: Geolocation }),
+    })
+    return
+  } catch (error) {
+    // Handle any errors that occur during the process
+    console.error(error)
+    res.status(500).json({ message: 'Internal Server Error' })
+    return
+  }
+}
+
+export const login = async (req: Request, res: Response): Promise<void> => {
+  // const slayer: Slayer = req.body
+  // console.log(slayer)
+  // console.log(Slayer)
+  // const geolocation: Geolocation = slayer.geolocation
+
+  try {
+    // Check if email not already in db
+    const foundSlayer: Slayer | null = await Slayer.scope(
+      'withPassword'
+    ).findOne({
+      where: { email: req.body.email },
+    })
+    if (!foundSlayer) {
+      res.status(400).json({ message: 'No Slayer found with this email' })
+      return
+    }
+    // Check if password matches DB
+    const isPasswordMatching = Utils.verifyPassword(
+      req.body.password,
+      foundSlayer.password
+    )
+    if (!isPasswordMatching) {
+      res.status(400).json({ message: 'Wrong password' })
+      return
+    }
+    // Response "logged in"
+    res.status(201).json({
+      message: 'Slayer logged in',
+      slayer: await Slayer.findByPk(foundSlayer.id, { include: Geolocation }),
     })
     return
   } catch (error) {

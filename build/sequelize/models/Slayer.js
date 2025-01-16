@@ -80,6 +80,11 @@ exports.Slayer = Slayer = __decorate([
     (0, sequelize_typescript_1.DefaultScope)(() => ({
         attributes: { exclude: ['password'] },
     })),
+    (0, sequelize_typescript_1.Scopes)(() => ({
+        withPassword: {
+            attributes: { include: ['password'] },
+        },
+    })),
     (0, sequelize_typescript_1.Table)({
         timestamps: false,
         underscored: true,

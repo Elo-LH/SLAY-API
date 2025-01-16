@@ -8,7 +8,7 @@
     "prestart": "npm run build",
     "start": "node build/app.js",
     "preserve": "npm run build",
-    "serve": "nodemon build/app.js --watch src/ ",
+    "serve": "nodemon build/app.js",
     "test": "vitest"
   },
   "keywords": [],

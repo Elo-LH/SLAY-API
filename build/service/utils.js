@@ -50,5 +50,8 @@ class Utils {
         const salt = bcrypt.genSaltSync(10);
         return bcrypt.hashSync(password, salt);
     }
+    static verifyPassword(password, dbPassword) {
+        return bcrypt.compareSync(password, dbPassword);
+    }
 }
 exports.Utils = Utils;
