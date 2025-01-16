@@ -13,12 +13,6 @@ exports.Album = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const Sound_js_1 = require("./Sound.js");
 let Album = class Album extends sequelize_typescript_1.Model {
-    name;
-    description;
-    type;
-    cover;
-    released_at;
-    sounds;
 };
 exports.Album = Album;
 __decorate([

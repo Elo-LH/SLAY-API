@@ -12,19 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Slayer = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const Geolocation_js_1 = require("./Geolocation.js");
+const utils_js_1 = require("../../service/utils.js");
 const pronounsEnum = ['il', 'elle', 'iel'];
 const rolesEnum = ['artist', 'band', 'slayer'];
 let Slayer = class Slayer extends sequelize_typescript_1.Model {
-    email;
-    pseudo;
-    password;
-    isAdmin;
-    avatar;
-    role;
-    pronouns;
-    isSearching;
-    geolocationId;
-    geolocation;
+    static encryptPassword(instance) {
+        instance.password = utils_js_1.Utils.encryptPassword(instance.getDataValue('password'));
+    }
 };
 exports.Slayer = Slayer;
 __decorate([
@@ -74,28 +68,17 @@ __decorate([
 ], Slayer.prototype, "geolocationId", void 0);
 __decorate([
     (0, sequelize_typescript_1.BelongsTo)(() => Geolocation_js_1.Geolocation),
-    __metadata("design:type", Geolocation_js_1.Geolocation
-    // Sounds ?
-    )
+    __metadata("design:type", Geolocation_js_1.Geolocation)
 ], Slayer.prototype, "geolocation", void 0);
+__decorate([
+    sequelize_typescript_1.BeforeCreate,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Slayer]),
+    __metadata("design:returntype", void 0)
+], Slayer, "encryptPassword", null);
 exports.Slayer = Slayer = __decorate([
-    (0, sequelize_typescript_1.Scopes)(() => ({
-        geolocation: {
-            include: [
-                {
-                    model: Geolocation_js_1.Geolocation,
-                    through: { attributes: [] },
-                },
-            ],
-        },
-        full: {
-            include: [
-                {
-                    model: Geolocation_js_1.Geolocation,
-                    through: { attributes: [] },
-                },
-            ],
-        },
+    (0, sequelize_typescript_1.DefaultScope)(() => ({
+        attributes: { exclude: ['password'] },
     })),
     (0, sequelize_typescript_1.Table)({
         timestamps: false,

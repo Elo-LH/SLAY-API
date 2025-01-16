@@ -15,11 +15,6 @@ const Album_js_1 = require("./Album.js");
 const Slayer_js_1 = require("./Slayer.js");
 const SlayerSound_js_1 = require("./SlayerSound.js");
 let Sound = class Sound extends sequelize_typescript_1.Model {
-    title;
-    audio;
-    album_id;
-    album;
-    performers;
 };
 exports.Sound = Sound;
 __decorate([

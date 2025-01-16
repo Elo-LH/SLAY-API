@@ -5,8 +5,8 @@ const Slayer_js_1 = require("../sequelize/models/Slayer.js");
 const Geolocation_js_1 = require("../sequelize/models/Geolocation.js");
 const signup = async (req, res) => {
     const slayer = req.body;
-    console.log(slayer);
-    console.log(Slayer_js_1.Slayer);
+    // console.log(slayer)
+    // console.log(Slayer)
     // const geolocation: Geolocation = slayer.geolocation
     try {
         // Check if email not already in db
@@ -49,19 +49,14 @@ const signup = async (req, res) => {
                     longitude: req.body.geolocation.longitude,
                     city: req.body.geolocation.city,
                 },
-            })
-                .then(([slayerGeolocation, created]) => newUser.$set('geolocation', slayerGeolocation))
-                .then((newUserGeo) => {
-                console.log(newUserGeo);
-                res.status(201).json({ message: 'Slayer created', user: newUserGeo });
-                return;
-            });
+            }).then(([slayerGeolocation, created]) => newUser.$set('geolocation', slayerGeolocation));
         }
-        else {
-            // Response "user created"
-            res.status(201).json({ message: 'Slayer created', user: newUser });
-            return;
-        }
+        // Response "user created"
+        res.status(201).json({
+            message: 'Slayer created',
+            user: await Slayer_js_1.Slayer.findByPk(newUser.id, { include: Geolocation_js_1.Geolocation }),
+        });
+        return;
     }
     catch (error) {
         // Handle any errors that occur during the process

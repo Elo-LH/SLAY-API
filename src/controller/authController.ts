@@ -4,8 +4,8 @@ import { Geolocation } from '../sequelize/models/Geolocation.js'
 
 export const signup = async (req: Request, res: Response): Promise<void> => {
   const slayer: Slayer = req.body
-  console.log(slayer)
-  console.log(Slayer)
+  // console.log(slayer)
+  // console.log(Slayer)
   // const geolocation: Geolocation = slayer.geolocation
 
   try {
@@ -52,20 +52,16 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
           longitude: req.body.geolocation.longitude,
           city: req.body.geolocation.city,
         },
-      })
-        .then(([slayerGeolocation, created]) =>
-          newUser.$set('geolocation', slayerGeolocation)
-        )
-        .then((newUserGeo) => {
-          console.log(newUserGeo)
-          res.status(201).json({ message: 'Slayer created', user: newUserGeo })
-          return
-        })
-    } else {
-      // Response "user created"
-      res.status(201).json({ message: 'Slayer created', user: newUser })
-      return
+      }).then(([slayerGeolocation, created]) =>
+        newUser.$set('geolocation', slayerGeolocation)
+      )
     }
+    // Response "user created"
+    res.status(201).json({
+      message: 'Slayer created',
+      user: await Slayer.findByPk(newUser.id, { include: Geolocation }),
+    })
+    return
   } catch (error) {
     // Handle any errors that occur during the process
     console.error(error)

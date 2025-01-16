@@ -14,8 +14,6 @@ const sequelize_typescript_1 = require("sequelize-typescript");
 const Sound_js_1 = require("./Sound.js");
 const Slayer_js_1 = require("./Slayer.js");
 let SlayerSound = class SlayerSound extends sequelize_typescript_1.Model {
-    slayer_id;
-    sound_id;
 };
 exports.SlayerSound = SlayerSound;
 __decorate([

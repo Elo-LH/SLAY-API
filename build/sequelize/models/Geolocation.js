@@ -14,10 +14,6 @@ const sequelize_typescript_1 = require("sequelize-typescript");
 const Slayer_js_1 = require("./Slayer.js");
 // import { SlayerSearch } from './SlayerSearch.js'
 let Geolocation = class Geolocation extends sequelize_typescript_1.Model {
-    city;
-    latitude;
-    longitude;
-    slayers;
 };
 exports.Geolocation = Geolocation;
 __decorate([
