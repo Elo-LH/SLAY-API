@@ -32,9 +32,13 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Utils = void 0;
 const bcrypt = __importStar(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 class Utils {
     /**
      * Return a random int, used by `utils.uid()`
@@ -52,6 +56,13 @@ class Utils {
     }
     static verifyPassword(password, dbPassword) {
         return bcrypt.compareSync(password, dbPassword);
+    }
+    static generateJWT(id) {
+        if (process.env.JWT_ACCESS) {
+            return jsonwebtoken_1.default.sign({ id: id }, process.env.JWT_ACCESS, {
+                expiresIn: '2 days',
+            });
+        }
     }
 }
 exports.Utils = Utils;

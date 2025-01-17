@@ -87,10 +87,15 @@ const login = async (req, res) => {
             res.status(400).json({ message: 'Wrong password' });
             return;
         }
+        //generate Json web token
+        const token = utils_js_1.Utils.generateJWT(foundSlayer.id);
         // Response "logged in"
         res.status(201).json({
             message: 'Slayer logged in',
-            slayer: await Slayer_js_1.Slayer.findByPk(foundSlayer.id, { include: Geolocation_js_1.Geolocation }),
+            slayer: await Slayer_js_1.Slayer.findByPk(foundSlayer.id.toString(), {
+                include: Geolocation_js_1.Geolocation,
+            }),
+            token: token,
         });
         return;
     }

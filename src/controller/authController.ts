@@ -97,10 +97,18 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({ message: 'Wrong password' })
       return
     }
+
+    //generate Json web token
+    const token = Utils.generateJWT(foundSlayer.id)
+
     // Response "logged in"
+
     res.status(201).json({
       message: 'Slayer logged in',
-      slayer: await Slayer.findByPk(foundSlayer.id, { include: Geolocation }),
+      slayer: await Slayer.findByPk(foundSlayer.id.toString(), {
+        include: Geolocation,
+      }),
+      token: token,
     })
     return
   } catch (error) {
