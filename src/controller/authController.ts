@@ -132,3 +132,27 @@ export const slayers = async (req: Request, res: Response): Promise<void> => {
     return
   }
 }
+
+export const profile = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // check token
+    console.log(req.body.token)
+    console.log(req.body)
+    const slayerId = req.body.token.id
+    if (!slayerId) {
+      res.status(400).json({ message: 'Could not retrieve token' })
+      return
+    }
+    // else return complete info of slayer logged in from token id
+    const result = await Slayer.findByPk(slayerId.toString(), {
+      include: Geolocation,
+    })
+    res.status(201).json({ message: 'Slayer profile', user: result })
+    return
+  } catch (error) {
+    // Handle any errors that occur during the process
+    console.error(error)
+    res.status(500).json({ message: 'Internal Server Error' })
+    return
+  }
+}

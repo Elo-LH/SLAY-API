@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.slayers = exports.login = exports.signup = void 0;
+exports.profile = exports.slayers = exports.login = exports.signup = void 0;
 const Slayer_js_1 = require("../sequelize/models/Slayer.js");
 const Geolocation_js_1 = require("../sequelize/models/Geolocation.js");
 const utils_js_1 = require("../service/utils.js");
@@ -122,3 +122,28 @@ const slayers = async (req, res) => {
     }
 };
 exports.slayers = slayers;
+const profile = async (req, res) => {
+    try {
+        // check token
+        console.log(req.body.token);
+        console.log(req.body);
+        const slayerId = req.body.token.id;
+        if (!slayerId) {
+            res.status(400).json({ message: 'Could not retrieve token' });
+            return;
+        }
+        // else return complete info of slayer logged in from token id
+        const result = await Slayer_js_1.Slayer.findByPk(slayerId.toString(), {
+            include: Geolocation_js_1.Geolocation,
+        });
+        res.status(201).json({ message: 'Slayer profile', user: result });
+        return;
+    }
+    catch (error) {
+        // Handle any errors that occur during the process
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+        return;
+    }
+};
+exports.profile = profile;
