@@ -57,11 +57,23 @@ class Utils {
     static verifyPassword(password, dbPassword) {
         return bcrypt.compareSync(password, dbPassword);
     }
-    static generateJWT(id) {
+    static generateAccessJWT(id) {
         if (process.env.JWT_ACCESS) {
             return jsonwebtoken_1.default.sign({ id: id }, process.env.JWT_ACCESS, {
-                expiresIn: '2 days',
+                expiresIn: '30 minutes',
             });
+        }
+    }
+    static generateRefreshJWT(id) {
+        if (process.env.JWT_REFRESH) {
+            return jsonwebtoken_1.default.sign({ id: id }, process.env.JWT_REFRESH, {
+                expiresIn: '7 days',
+            });
+        }
+    }
+    static verifyRefreshJWT(refreshToken) {
+        if (process.env.JWT_REFRESH) {
+            return jsonwebtoken_1.default.verify(refreshToken, process.env.JWT_REFRESH);
         }
     }
 }
