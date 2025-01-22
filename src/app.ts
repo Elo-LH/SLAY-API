@@ -14,12 +14,13 @@ import sequelize from './sequelize/config/database.js'
 import authRouter from './route/authRoute.js'
 
 const corsOptions = {
-  origin: 'localhost',
+  origin: /^http:\/\/localhost(:[0-9]+)?$/,
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
-
 console.log(`Lauching APP.js`)
 const app: Express = express()
+
+app.use(cors(corsOptions))
 
 // Use body-parser middleware
 app.use(bodyParser.json())
@@ -49,13 +50,13 @@ async function init() {
 
 app.use(express.json())
 
-app.get('/', cors(corsOptions), (req, res) => {
+app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
 // Authentification routes
 
-app.use('/api/v1/auth', cors(corsOptions), authRouter)
+app.use('/api/v1/auth', authRouter)
 
 // Default not found route
 app.use('*', (req: Request, res: Response) => {
