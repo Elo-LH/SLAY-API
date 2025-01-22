@@ -9,8 +9,14 @@ import bodyParser from 'body-parser'
 config({ path: resolve(process.cwd(), '.env') })
 
 import express, { Express, Request, Response } from 'express'
+import cors from 'cors'
 import sequelize from './sequelize/config/database.js'
 import authRouter from './route/authRoute.js'
+
+const corsOptions = {
+  origin: 'localhost',
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
 
 console.log(`Lauching APP.js`)
 const app: Express = express()
@@ -43,13 +49,13 @@ async function init() {
 
 app.use(express.json())
 
-app.get('/', (req, res) => {
+app.get('/', cors(corsOptions), (req, res) => {
   res.send('Hello World!')
 })
 
 // Authentification routes
 
-app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/auth', cors(corsOptions), authRouter)
 
 // Default not found route
 app.use('*', (req: Request, res: Response) => {
