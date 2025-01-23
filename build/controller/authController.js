@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.slayers = exports.login = exports.signup = void 0;
+exports.tokenRotation = exports.profile = exports.slayers = exports.login = exports.signup = void 0;
 const Slayer_js_1 = require("../sequelize/models/Slayer.js");
 const Geolocation_js_1 = require("../sequelize/models/Geolocation.js");
 const utils_js_1 = require("../service/utils.js");
+const RefreshToken_js_1 = require("../sequelize/models/RefreshToken.js");
 const signup = async (req, res) => {
     const slayer = req.body;
     // console.log(slayer)
@@ -42,6 +43,11 @@ const signup = async (req, res) => {
             res.status(400).json({ message: 'Failed to create new Slayer' });
             return;
         }
+        // create refresh token row
+        await RefreshToken_js_1.RefreshToken.create({
+            slayerId: newUser.id,
+            token: '',
+        });
         // initiate geolocation if there is one
         if (req.body.geolocation) {
             await Geolocation_js_1.Geolocation.findOrCreate({
@@ -68,10 +74,6 @@ const signup = async (req, res) => {
 };
 exports.signup = signup;
 const login = async (req, res) => {
-    // const slayer: Slayer = req.body
-    // console.log(slayer)
-    // console.log(Slayer)
-    // const geolocation: Geolocation = slayer.geolocation
     try {
         // Check if email not already in db
         const foundSlayer = await Slayer_js_1.Slayer.scope('withPassword').findOne({
@@ -87,10 +89,26 @@ const login = async (req, res) => {
             res.status(400).json({ message: 'Wrong password' });
             return;
         }
+        //generate Json web token
+        const accessToken = utils_js_1.Utils.generateAccessJWT(foundSlayer.id);
+        //generate Json refresh web token
+        const refreshToken = utils_js_1.Utils.generateRefreshJWT(foundSlayer.id);
+        if (!accessToken || !refreshToken) {
+            res.status(400).json({ message: 'Could not generate tokens' });
+            return;
+        }
+        //put refresh token in DB
+        const slayerRefreshToken = await RefreshToken_js_1.RefreshToken.findByPk(foundSlayer.id);
+        slayerRefreshToken.token = refreshToken;
+        slayerRefreshToken.save();
         // Response "logged in"
         res.status(201).json({
             message: 'Slayer logged in',
-            slayer: await Slayer_js_1.Slayer.findByPk(foundSlayer.id, { include: Geolocation_js_1.Geolocation }),
+            slayer: await Slayer_js_1.Slayer.findByPk(foundSlayer.id.toString(), {
+                include: Geolocation_js_1.Geolocation,
+            }),
+            accessToken: accessToken,
+            refreshToken: refreshToken,
         });
         return;
     }
@@ -117,3 +135,82 @@ const slayers = async (req, res) => {
     }
 };
 exports.slayers = slayers;
+const profile = async (req, res) => {
+    try {
+        // check token
+        console.log(req.body.token);
+        console.log(req.body);
+        const slayerId = req.body.token.id;
+        if (!slayerId) {
+            res.status(400).json({ message: 'Could not retrieve token' });
+            return;
+        }
+        // else return complete info of slayer logged in from token id
+        const result = await Slayer_js_1.Slayer.findByPk(slayerId.toString(), {
+            include: Geolocation_js_1.Geolocation,
+        });
+        res.status(201).json({ message: 'Slayer profile', user: result });
+        return;
+    }
+    catch (error) {
+        // Handle any errors that occur during the process
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+        return;
+    }
+};
+exports.profile = profile;
+const tokenRotation = async (req, res) => {
+    try {
+        //get refresh token value
+        const oldRefreshToken = req.header('Authorization')?.replace('Bearer ', '');
+        if (!oldRefreshToken) {
+            res.status(400).json({ message: 'Could not retrieve token' });
+            return;
+        }
+        const decoded = utils_js_1.Utils.verifyRefreshJWT(oldRefreshToken);
+        // search this token in db
+        const slayerRefreshToken = await RefreshToken_js_1.RefreshToken.findByPk(decoded.id);
+        if (slayerRefreshToken.token !== oldRefreshToken) {
+            //Logout user !!!
+            res.status(400).json({ message: 'Wrong refresh token' });
+            return;
+        }
+        //generate Json refresh web token
+        const newRefreshToken = utils_js_1.Utils.generateRefreshJWT(decoded.id);
+        //put refresh token in DB
+        slayerRefreshToken.token = newRefreshToken;
+        slayerRefreshToken.save();
+        // generate a new access token
+        const newAccessToken = utils_js_1.Utils.generateAccessJWT(decoded.id);
+        // Response "user created"
+        res.status(201).json({
+            message: 'Token rotation success',
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken,
+        });
+        return;
+        return;
+    }
+    catch (error) {
+        // Handle any errors that occur during the process
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+        return;
+    }
+};
+exports.tokenRotation = tokenRotation;
+// delete tokens when user logs out
+// export const signout = async (req: Request, res: Response): Promise<void> => {
+//   try {
+//     const result = await Slayer.findAll({ include: Geolocation })
+//     // Response "user created"
+//     res.status(201).json({ message: 'Slayer created', user: result })
+//     return
+//   } catch (error) {
+//     // Handle any errors that occur during the process
+//     console.error(error)
+//     res.status(500).json({ message: 'Internal Server Error' })
+//     return
+//   }
+// }

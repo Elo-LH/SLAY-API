@@ -9,11 +9,18 @@ import bodyParser from 'body-parser'
 config({ path: resolve(process.cwd(), '.env') })
 
 import express, { Express, Request, Response } from 'express'
+import cors from 'cors'
 import sequelize from './sequelize/config/database.js'
 import authRouter from './route/authRoute.js'
 
+const corsOptions = {
+  origin: /^http:\/\/localhost(:[0-9]+)?$/,
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
 console.log(`Lauching APP.js`)
 const app: Express = express()
+
+app.use(cors(corsOptions))
 
 // Use body-parser middleware
 app.use(bodyParser.json())
