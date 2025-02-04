@@ -11,10 +11,16 @@ const body_parser_1 = __importDefault(require("body-parser"));
 // Configure dotenv
 (0, dotenv_1.config)({ path: (0, path_1.resolve)(process.cwd(), '.env') });
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 const database_js_1 = __importDefault(require("./sequelize/config/database.js"));
 const authRoute_js_1 = __importDefault(require("./route/authRoute.js"));
+const corsOptions = {
+    origin: /^http:\/\/localhost(:[0-9]+)?$/,
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
 console.log(`Lauching APP.js`);
 const app = (0, express_1.default)();
+app.use((0, cors_1.default)(corsOptions));
 // Use body-parser middleware
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));

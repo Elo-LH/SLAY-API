@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.tokenRotation = exports.profile = exports.slayers = exports.login = exports.signup = void 0;
+exports.tokenRotation = exports.modifyProfile = exports.profile = exports.slayers = exports.login = exports.signup = void 0;
 const Slayer_js_1 = require("../sequelize/models/Slayer.js");
 const Geolocation_js_1 = require("../sequelize/models/Geolocation.js");
 const utils_js_1 = require("../service/utils.js");
@@ -160,6 +160,51 @@ const profile = async (req, res) => {
     }
 };
 exports.profile = profile;
+const modifyProfile = async (req, res) => {
+    try {
+        // check token
+        console.log(req.body.token);
+        console.log(req.body);
+        const slayerId = req.body.token.id;
+        if (!slayerId) {
+            res.status(400).json({ message: 'Could not retrieve token' });
+            return;
+        }
+        // get Slayer by id
+        let slayer = await Slayer_js_1.Slayer.findByPk(slayerId.toString(), {
+            include: Geolocation_js_1.Geolocation,
+        });
+        // initiate geolocation if there is one
+        if (req.body.geolocation) {
+            await Geolocation_js_1.Geolocation.findOrCreate({
+                where: {
+                    latitude: req.body.geolocation.latitude,
+                    longitude: req.body.geolocation.longitude,
+                    city: req.body.geolocation.city,
+                },
+            }).then(([slayerGeolocation, created]) => slayer.$set('geolocation', slayerGeolocation));
+        }
+        // update slayer infos
+        slayer.update({
+            email: req.body.email,
+            pseudo: req.body.pseudo,
+            avatar: req.body.avatar,
+            pronouns: req.body.pronouns,
+            isSearching: req.body.isSearching,
+        });
+        await slayer.save();
+        //apply changes
+        res.status(201).json({ message: 'Slayer profile updated', user: slayer });
+        return;
+    }
+    catch (error) {
+        // Handle any errors that occur during the process
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+        return;
+    }
+};
+exports.modifyProfile = modifyProfile;
 const tokenRotation = async (req, res) => {
     try {
         //get refresh token value
