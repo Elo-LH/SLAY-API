@@ -8,29 +8,24 @@ import {
   Default,
   Unique,
   AllowNull,
+  BeforeCreate,
+  DefaultScope,
+  AfterCreate,
   Scopes,
+  BeforeUpdate,
 } from 'sequelize-typescript'
 import { Geolocation } from './Geolocation.js'
+import { Utils } from '../../service/utils.js'
 
 const pronounsEnum: string[] = ['il', 'elle', 'iel']
 const rolesEnum: string[] = ['artist', 'band', 'slayer']
 
+@DefaultScope(() => ({
+  attributes: { exclude: ['password'] },
+}))
 @Scopes(() => ({
-  geolocation: {
-    include: [
-      {
-        model: Geolocation,
-        through: { attributes: [] },
-      },
-    ],
-  },
-  full: {
-    include: [
-      {
-        model: Geolocation,
-        through: { attributes: [] },
-      },
-    ],
+  withPassword: {
+    attributes: { include: ['password'] },
   },
 }))
 @Table({
@@ -83,6 +78,20 @@ export class Slayer extends Model<Slayer> {
 
   @BelongsTo(() => Geolocation)
   geolocation?: Geolocation
+
+  @BeforeCreate
+  static encryptPassword(instance: Slayer) {
+    instance.password = Utils.encryptPassword(instance.getDataValue('password'))
+  }
+
+  @BeforeUpdate
+  static reencryptPassword(instance: Slayer) {
+    if (instance.changed('password')) {
+      instance.password = Utils.encryptPassword(
+        instance.getDataValue('password')
+      )
+    }
+  }
 
   // Sounds ?
 }

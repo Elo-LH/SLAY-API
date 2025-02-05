@@ -1,3 +1,4 @@
 .env
 .modelsTestData.json
 node_modules
+build
