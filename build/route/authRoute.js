@@ -9,5 +9,6 @@ authRouter.route('/login').post(authController_js_1.login);
 authRouter.route('/slayers').get(authController_js_1.slayers);
 authRouter.route('/profile').get(auth_js_1.auth, authController_js_1.profile);
 authRouter.route('/modifyProfile').put(auth_js_1.auth, authController_js_1.modifyProfile);
+authRouter.route('/modifyPassword').put(auth_js_1.auth, authController_js_1.modifyPassword);
 authRouter.route('/tokenRotation').get(authController_js_1.tokenRotation);
 exports.default = authRouter;

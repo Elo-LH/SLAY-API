@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.tokenRotation = exports.modifyProfile = exports.profile = exports.slayers = exports.login = exports.signup = void 0;
+exports.tokenRotation = exports.modifyPassword = exports.modifyProfile = exports.profile = exports.slayers = exports.login = exports.signup = void 0;
 const Slayer_js_1 = require("../sequelize/models/Slayer.js");
 const Geolocation_js_1 = require("../sequelize/models/Geolocation.js");
 const utils_js_1 = require("../service/utils.js");
@@ -205,6 +205,60 @@ const modifyProfile = async (req, res) => {
     }
 };
 exports.modifyProfile = modifyProfile;
+const modifyPassword = async (req, res) => {
+    try {
+        // check token
+        console.log(req.body.token);
+        console.log(req.body);
+        const slayerId = req.body.token.id;
+        if (!slayerId) {
+            res.status(400).json({ message: 'Could not retrieve token' });
+            return;
+        }
+        // get Slayer by id
+        let slayer = await Slayer_js_1.Slayer.scope('withPassword').findByPk(slayerId.toString());
+        //verify complexity of newPasswordf ????
+        //verify oldPassword
+        // Check if password matches DB
+        const isPasswordMatching = utils_js_1.Utils.verifyPassword(req.body.oldPassword, slayer.password);
+        if (!isPasswordMatching) {
+            res.status(400).json({ message: 'Wrong password' });
+            return;
+        }
+        //generate Json web token
+        const accessToken = utils_js_1.Utils.generateAccessJWT(slayer.id);
+        //generate Json refresh web token
+        const refreshToken = utils_js_1.Utils.generateRefreshJWT(slayer.id);
+        if (!accessToken || !refreshToken) {
+            res.status(400).json({ message: 'Could not generate tokens' });
+            return;
+        }
+        //put refresh token in DB
+        const slayerRefreshToken = await RefreshToken_js_1.RefreshToken.findByPk(slayer.id);
+        slayerRefreshToken.token = refreshToken;
+        slayerRefreshToken.save();
+        // update slayer password
+        await slayer.update({
+            password: req.body.newPassword,
+        });
+        await slayer.save();
+        //apply changes
+        res.status(201).json({
+            message: 'Slayer password updated',
+            user: slayer,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+        });
+        return;
+    }
+    catch (error) {
+        // Handle any errors that occur during the process
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+        return;
+    }
+};
+exports.modifyPassword = modifyPassword;
 const tokenRotation = async (req, res) => {
     try {
         //get refresh token value

@@ -4,6 +4,7 @@ import {
   login,
   profile,
   modifyProfile,
+  modifyPassword,
   tokenRotation,
 } from '../controller/authController.js'
 import { auth } from '../middleware/auth.js'
@@ -17,6 +18,7 @@ authRouter.route('/login').post(login)
 authRouter.route('/slayers').get(slayers)
 authRouter.route('/profile').get(auth, profile)
 authRouter.route('/modifyProfile').put(auth, modifyProfile)
+authRouter.route('/modifyPassword').put(auth, modifyPassword)
 authRouter.route('/tokenRotation').get(tokenRotation)
 
 export default authRouter

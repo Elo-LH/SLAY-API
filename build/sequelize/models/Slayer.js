@@ -19,6 +19,11 @@ let Slayer = class Slayer extends sequelize_typescript_1.Model {
     static encryptPassword(instance) {
         instance.password = utils_js_1.Utils.encryptPassword(instance.getDataValue('password'));
     }
+    static reencryptPassword(instance) {
+        if (instance.changed('password')) {
+            instance.password = utils_js_1.Utils.encryptPassword(instance.getDataValue('password'));
+        }
+    }
 };
 exports.Slayer = Slayer;
 __decorate([
@@ -76,6 +81,12 @@ __decorate([
     __metadata("design:paramtypes", [Slayer]),
     __metadata("design:returntype", void 0)
 ], Slayer, "encryptPassword", null);
+__decorate([
+    sequelize_typescript_1.BeforeUpdate,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Slayer]),
+    __metadata("design:returntype", void 0)
+], Slayer, "reencryptPassword", null);
 exports.Slayer = Slayer = __decorate([
     (0, sequelize_typescript_1.DefaultScope)(() => ({
         attributes: { exclude: ['password'] },

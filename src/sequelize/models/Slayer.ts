@@ -12,6 +12,7 @@ import {
   DefaultScope,
   AfterCreate,
   Scopes,
+  BeforeUpdate,
 } from 'sequelize-typescript'
 import { Geolocation } from './Geolocation.js'
 import { Utils } from '../../service/utils.js'
@@ -81,6 +82,15 @@ export class Slayer extends Model<Slayer> {
   @BeforeCreate
   static encryptPassword(instance: Slayer) {
     instance.password = Utils.encryptPassword(instance.getDataValue('password'))
+  }
+
+  @BeforeUpdate
+  static reencryptPassword(instance: Slayer) {
+    if (instance.changed('password')) {
+      instance.password = Utils.encryptPassword(
+        instance.getDataValue('password')
+      )
+    }
   }
 
   // Sounds ?

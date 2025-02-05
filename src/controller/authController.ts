@@ -224,6 +224,71 @@ export const modifyProfile = async (
   }
 }
 
+export const modifyPassword = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    // check token
+    console.log(req.body.token)
+    console.log(req.body)
+    const slayerId = req.body.token.id
+    if (!slayerId) {
+      res.status(400).json({ message: 'Could not retrieve token' })
+      return
+    }
+    // get Slayer by id
+    let slayer: Slayer | null = await Slayer.scope('withPassword').findByPk(
+      slayerId.toString()
+    )
+    //verify complexity of newPasswordf ????
+    //verify oldPassword
+    // Check if password matches DB
+    const isPasswordMatching = Utils.verifyPassword(
+      req.body.oldPassword,
+      slayer.password
+    )
+    if (!isPasswordMatching) {
+      res.status(400).json({ message: 'Wrong password' })
+      return
+    }
+
+    //generate Json web token
+    const accessToken = Utils.generateAccessJWT(slayer.id)
+    //generate Json refresh web token
+    const refreshToken = Utils.generateRefreshJWT(slayer.id)
+    if (!accessToken || !refreshToken) {
+      res.status(400).json({ message: 'Could not generate tokens' })
+      return
+    }
+
+    //put refresh token in DB
+    const slayerRefreshToken = await RefreshToken.findByPk(slayer.id)
+    slayerRefreshToken.token = refreshToken
+    slayerRefreshToken.save()
+
+    // update slayer password
+    await slayer.update({
+      password: req.body.newPassword,
+    })
+    await slayer.save()
+
+    //apply changes
+    res.status(201).json({
+      message: 'Slayer password updated',
+      user: slayer,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    })
+    return
+  } catch (error) {
+    // Handle any errors that occur during the process
+    console.error(error)
+    res.status(500).json({ message: 'Internal Server Error' })
+    return
+  }
+}
+
 export const tokenRotation = async (
   req: Request,
   res: Response
