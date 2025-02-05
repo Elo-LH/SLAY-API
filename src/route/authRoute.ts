@@ -2,6 +2,7 @@ import {
   signup,
   slayers,
   login,
+  logout,
   profile,
   modifyProfile,
   modifyPassword,
@@ -15,6 +16,7 @@ const authRouter = Router()
 
 authRouter.route('/signup').post(signup)
 authRouter.route('/login').post(login)
+authRouter.route('/logout').get(auth, logout)
 authRouter.route('/slayers').get(slayers)
 authRouter.route('/profile').get(auth, profile)
 authRouter.route('/modifyProfile').put(auth, modifyProfile)

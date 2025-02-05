@@ -134,6 +134,34 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 }
 
+export const logout = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // check token
+    console.log(req.body.token)
+    console.log(req.body)
+    const slayerId = req.body.token.id
+    if (!slayerId) {
+      res.status(400).json({ message: 'Could not retrieve token' })
+      return
+    }
+    // delete refresh token
+    const slayerRefreshToken = await RefreshToken.findByPk(slayerId)
+    slayerRefreshToken.token = ''
+    slayerRefreshToken.save()
+
+    // return successful message
+    res.status(201).json({
+      message: 'Slayer logged out',
+    })
+    return
+  } catch (error) {
+    // Handle any errors that occur during the process
+    console.error(error)
+    res.status(500).json({ message: 'Internal Server Error' })
+    return
+  }
+}
+
 export const slayers = async (req: Request, res: Response): Promise<void> => {
   try {
     const result = await Slayer.findAll({ include: Geolocation })
