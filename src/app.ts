@@ -14,7 +14,7 @@ import sequelize from './sequelize/config/database.js'
 import authRouter from './route/authRoute.js'
 
 const corsOptions = {
-  origin: /^http:\/\/localhost(:[0-9]+)?$/,
+  origin: 'https://slay-4zof.onrender.com',
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 console.log(`Lauching APP.js`)
